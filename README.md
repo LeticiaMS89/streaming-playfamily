@@ -61,3 +61,47 @@ playfamily/
     │   ├── App.jsx         # Tela principal da vitrine de filmes responsiva
     │   └── main.jsx        # Configuração de rotas e inicialização do React
     └── package.json        # Dependências e scripts do Frontend
+```
+
+---
+
+## 🔧 INSTRUÇÕES DE COMO EXECUTAR O PROJETO LOCALMENTE
+
+### PREREQUISITOS
+Antes de começar, verifique se você possui o **Node.js** e o **Git** instalados em seu computador.
+
+## PASSO 1: CLONAR O REPOSITÓRIO
+Abra o terminal do seu sistema operacional ou do VS Code e execute o comando:
+
+git clone [https://github.com/LeticiaMS89/streaming-playfamily.git](https://github.com/LeticiaMS89/streaming-playfamily.git)
+cd streaming-playfamily
+
+## PASSO 2: CONFIGURAR E INICIAR O BACKEND (SERVIDOR)
+Abra um terminal na pasta raiz do projeto e mude para o diretório do backend:
+
+* cd backend
+* npm install
+* npm run dev
+
+💡 Nota: O servidor da API iniciará automaticamente e ficará ativo no endereço http://localhost:3000. Mantenha este terminal aberto.
+
+## PASSO 3: CONFIGURAR E INICIAR O FRONTEND (INTERFACE)Abra um segundo terminal separado na pasta raiz do projeto e mude para o diretório do frontend:Bash
+
+* cd frontend
+* npm install
+* npm run dev
+
+💡 Nota: O compilador do Vite vai inicializar a aplicação e exibir um link local (geralmente http://localhost:5173). Copie esse endereço e abra no seu navegador de internet.
+
+## 🔐 CREDENCIAIS PARA TESTE DE ACESSOPara passar pela tela de autenticação e validar o login integrado, use os seguintes dados:
+
+* E-mail: user@devflix.com
+* Senha: 123456
+
+## 🔗 ENDPOINTS DA API (BACKEND)
+MétodoRotaDescriçãoGET/Retorna o status de funcionamento da API.POST/loginValida as credenciais do usuário enviadas no corpo (body) da requisição.GET/moviesRetorna a lista completa com todos os filmes cadastrados na base de dados.GET/featuredFiltra e retorna o primeiro filme marcado como destaque principal.GET/movies/:idBusca e retorna as informações detalhadas de um único filme com base no ID dinâmico passado na URL.
+
+## 👩‍💻 AUTORA
+* Leticia Moreira Silva
+* Estudante de Análise e Desenvolvimento de Sistemas (Estácio)
+* GitHub: LeticiaMS89  
