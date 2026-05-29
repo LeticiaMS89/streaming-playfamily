@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-dom';
 function App() {
   // Hook para navegação entre páginas
   const navigate = useNavigate();
-  
+
   // Recupera dados do perfil selecionado do armazenamento local (localStorage)
   const perfilId = Number(localStorage.getItem('perfilSelecionadoId')) || 1;
   const perfilNome = localStorage.getItem('perfilSelecionadoNome') || "Usuário";
+  const perfilAvatar = localStorage.getItem('perfilSelecionadoAvatar') || '';
 
   // ========== ESTADOS DO APLICATIVO ==========
   const [movies, setMovies] = useState([]); // Lista completa de filmes/séries/animes
@@ -43,7 +44,10 @@ function App() {
     { id: 'ficcao cientifica', nome: 'Ficção Científica' },
     { id: 'classicos', nome: 'Clássicos Cult' },
     { id: 'acao', nome: 'Ação & Aventura' },
-    { id: 'animacao', nome: 'Animação' }
+    { id: 'animacao', nome: 'Animação' },
+    { id: 'suspense', nome: 'Suspense e Mistério' },
+    { id: 'drama', nome: 'Drama' }
+    
   ];
 
   // ========== CARREGAMENTO DOS FILMES DO BACKEND ==========
@@ -68,25 +72,26 @@ function App() {
   const lidarTrocaPerfil = () => {
     localStorage.removeItem('perfilSelecionadoId');
     localStorage.removeItem('perfilSelecionadoNome');
-    navigate('/'); 
+    localStorage.removeItem('perfilSelecionadoAvatar');
+    navigate('/');
   };
 
   // ========== LÓGICA DE FILTRAGEM ==========
   // Filtra os filmes de acordo com: perfil do usuário, tipo de mídia e busca
-  
+
   // 1. Filtra por perfil: apenas filmes que este perfil pode ver
-  const midiasDoPerfil = movies.filter(m => 
+  const midiasDoPerfil = movies.filter(m =>
     perfilId > 6 || (m.profileIds && m.profileIds.includes(perfilId))
   );
-  
+
   // 2. Filtra por tipo: filme, série, anime, documentário ou todos
-  const midiasPorTipo = abaAtual === 'todos' 
-    ? midiasDoPerfil 
+  const midiasPorTipo = abaAtual === 'todos'
+    ? midiasDoPerfil
     : midiasDoPerfil.filter(m => m.mediaType === abaAtual);
-  
+
   // 3. Filtra por termo de busca (título ou gênero)
-  const midiasFiltradasfinais = midiasPorTipo.filter(m => 
-    m.title.toLowerCase().includes(busca.toLowerCase()) || 
+  const midiasFiltradasfinais = midiasPorTipo.filter(m =>
+    m.title.toLowerCase().includes(busca.toLowerCase()) ||
     m.genres.some(g => g.toLowerCase().includes(busca.toLowerCase()))
   );
 
@@ -101,26 +106,26 @@ function App() {
   if (loading) {
     return (
       <div style={{ backgroundColor: '#141414', color: '#fff', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: 'sans-serif' }}>
-        <h2>Carregando catálogo PlayFamily...</h2>
+        <h2>Bem vindo à PlayFamily...</h2>
       </div>
     );
   }
 
   return (
     <div style={{ backgroundColor: '#141414', color: '#fff', minHeight: '100vh', fontFamily: 'Arial, sans-serif', paddingBottom: '50px', overflowX: 'hidden' }}>
-      
+
       {/* ========== CABEÇALHO/HEADER RESPONSIVO ========== */}
       {/* Barra superior fixa com logo, navegação, busca e perfil do usuário */}
-      <header style={{ 
-        display: 'flex', 
+      <header style={{
+        display: 'flex',
         flexDirection: esCelular ? 'column' : 'row',
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        padding: esCelular ? '15px 20px' : '15px 40px', 
-        backgroundColor: 'rgba(20, 20, 20, 0.95)', 
-        position: 'sticky', 
-        top: 0, 
-        zIndex: 10, 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: esCelular ? '15px 20px' : '15px 40px',
+        backgroundColor: 'rgba(20, 20, 20, 0.95)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
         backdropFilter: 'blur(10px)',
         gap: esCelular ? '15px' : '0px'
       }}>
@@ -128,12 +133,12 @@ function App() {
         <div style={{ display: 'flex', flexDirection: esCelular ? 'column' : 'row', alignItems: 'center', gap: esCelular ? '10px' : '40px', width: esCelular ? '100%' : 'auto' }}>
           {/* Logo clicável que volta para "Todos" */}
           <h1 style={{ color: '#E50914', margin: 0, fontSize: '1.6rem', cursor: 'pointer', fontWeight: 'bold', letterSpacing: '1px' }} onClick={() => setAbaAtual('todos')}>PlayFamily</h1>
-          
+
           {/* Menu de navegação: Início, Filmes, Séries, Animes, Documentários */}
-          <nav style={{ 
-            display: 'flex', 
-            gap: '15px', 
-            color: '#e5e5e5', 
+          <nav style={{
+            display: 'flex',
+            gap: '15px',
+            color: '#e5e5e5',
             fontSize: '0.8rem',
             overflowX: esCelular ? 'auto' : 'unset',
             whiteSpace: 'nowrap',
@@ -151,12 +156,12 @@ function App() {
 
         {/* ========== BUSCA E OPÇÕES DE PERFIL ========== */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', width: esCelular ? '100%' : 'auto' }}>
-          
+
           {/* Caixa de Busca com Ícone de Lupa */}
           <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.4)', padding: '6px 12px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.15)', flexGrow: esCelular ? 1 : 0 }}>
             {/* Ícone da lupa */}
             <svg style={{ width: '16px', height: '16px', fill: '#b3b3b3', marginRight: '8px', flexShrink: 0 }} viewBox="0 0 24 24">
-              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
             </svg>
             {/* Campo de entrada de busca */}
             <input type="text" placeholder="Buscar..." value={busca} onChange={(e) => setBusca(e.target.value)} style={{ backgroundColor: 'transparent', border: 'none', color: '#fff', outline: 'none', width: esCelular ? '100%' : '140px', fontSize: '0.85rem' }} />
@@ -164,7 +169,19 @@ function App() {
 
           {/* ========== INFORMAÇÕES DO PERFIL E LOGOUT ========== */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexShrink: 0 }}>
-            {/* Nome do Perfil e Opção de Trocar */}
+            {perfilAvatar ? (
+              <img
+                src={perfilAvatar}
+                alt={perfilNome}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.25)' }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${perfilNome}`;
+                }}
+              />
+            ) : (
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#333' }} />
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '0.8rem' }}>{perfilNome}</span>
               <span onClick={lidarTrocaPerfil} style={{ color: '#b3b3b3', fontSize: '0.7rem', cursor: 'pointer', textDecoration: 'underline' }}>
@@ -181,12 +198,12 @@ function App() {
       {/* ========== BANNER DESTAQUE PRINCIPAL ========== */}
       {/* Exibe um filme/série em grande destaque apenas quando não há busca ativa */}
       {destaque && !busca && (
-        <div style={{ 
-          padding: esCelular ? '60px 20px 40px 20px' : '120px 40px 80px 40px', 
-          background: `linear-gradient(to top, #141414 5%, transparent 95%), linear-gradient(to right, rgba(20,20,20,0.95) 40%, rgba(20,20,20,0.4) 100%), url("${destaque.bannerImage}") center/cover`, 
-          minHeight: esCelular ? '30vh' : '50vh', 
-          display: 'flex', 
-          flexDirection: 'column', 
+        <div style={{
+          padding: esCelular ? '60px 20px 40px 20px' : '120px 40px 80px 40px',
+          background: `linear-gradient(to top, #141414 5%, transparent 95%), linear-gradient(to right, rgba(20,20,20,0.95) 40%, rgba(20,20,20,0.4) 100%), url("${destaque.bannerImage}") center/cover`,
+          minHeight: esCelular ? '30vh' : '50vh',
+          display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'center'
         }}>
           <span style={{ color: '#E50914', fontWeight: 'bold', fontSize: '0.7rem', letterSpacing: '2px' }}>DESTAQUE PERSONALIZADO</span>
@@ -220,13 +237,13 @@ function App() {
             return (
               <div key={sub.id} style={{ marginBottom: '30px' }}>
                 <h3 style={{ fontSize: esCelular ? '1.1rem' : '1.3rem', marginBottom: '12px', fontWeight: 'bold', color: '#fff' }}>{sub.nome}</h3>
-                
+
                 {/* Carroussel Horizontal com Scroll Suave */}
                 {/* No mobile, permite scroll horizontal nativo e suave */}
-                <div style={{ 
-                  display: 'flex', 
-                  gap: '15px', 
-                  overflowX: 'auto', 
+                <div style={{
+                  display: 'flex',
+                  gap: '15px',
+                  overflowX: 'auto',
                   paddingBottom: '10px',
                   WebkitOverflowScrolling: 'touch', // Scroll nativo suave no iOS
                   scrollbarWidth: 'none' // Remove barra no Firefox
@@ -245,31 +262,31 @@ function App() {
       {/* Janela modal que exibe o trailer do filme/série selecionado */}
       {midiaSelecionada && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.9)', display: 'flex', justifyContent: 'center', alignItems: esCelular ? 'flex-start' : 'center', zIndex: 100, backdropFilter: 'blur(5px)', overflowY: esCelular ? 'auto' : 'hidden', padding: esCelular ? '20px 0' : '0' }}>
-          <div style={{ 
-            backgroundColor: '#181818', 
-            width: esCelular ? '90%' : '700px', 
-            borderRadius: '8px', 
-            overflow: 'hidden', 
-            border: '1px solid #2c2c2c', 
+          <div style={{
+            backgroundColor: '#181818',
+            width: esCelular ? '90%' : '700px',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            border: '1px solid #2c2c2c',
             position: 'relative',
             marginTop: esCelular ? '40px' : '0px',
             marginBottom: esCelular ? '40px' : '0px'
           }}>
             {/* Botão para Fechar Modal */}
             <button onClick={() => setMidiaSelecionada(null)} style={{ position: 'absolute', top: '12px', right: '12px', backgroundColor: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontSize: '0.9rem', zIndex: 10, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>✕</button>
-            
+
             {/* VIDEO RESPONSIVO (Proporção 16:9) */}
             <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%' /* Proporção 16:9 */ }}>
-              <iframe 
+              <iframe
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                src={midiaSelecionada.trailerUrl} 
-                title="YouTube video player" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                src={midiaSelecionada.trailerUrl?.replace("watch?v=", "embed/")}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
             </div>
-            
+
             {/* INFORMAÇÕES DO FILME/SÉRIE NO MODAL */}
             <div style={{ padding: esCelular ? '20px' : '25px' }}>
               <h2 style={{ margin: '0 0 10px 0', fontSize: esCelular ? '1.4rem' : '1.7rem', fontWeight: 'bold' }}>{midiaSelecionada.title}</h2>
@@ -291,34 +308,67 @@ function App() {
 // Se for celular: tamanho reduzido; Se for desktop: efeito hover (escala aumenta)
 
 const CardComponent = ({ m, setMidiaSelecionada, esCelular }) => {
-  // Define tamanhos diferentes para mobile e desktop
-  const larguraCard = esCelular ? '180px' : '230px';
-  const alturaCard = esCelular ? '100px' : '130px';
+  // Define proporção vertical estilo pôster para mobile e desktop
+  const larguraCard = esCelular ? '150px' : '190px';
+  const alturaCard = esCelular ? '230px' : '300px';
 
   return (
-    <div 
-      onClick={() => setMidiaSelecionada(m)} 
-      style={{ 
-        minWidth: larguraCard, 
-        width: larguraCard, 
-        height: alturaCard, 
-        // Fundo: imagem do filme com degradê escuro para o título ficar legível
-        background: `linear-gradient(to top, rgba(0,0,0,0.95) 20%, transparent 80%), url("${m.coverImage}") center/cover`, 
-        borderRadius: '6px', 
-        display: 'flex', 
-        alignItems: 'flex-end', 
-        padding: '12px', 
-        cursor: 'pointer', 
-        transition: 'transform 0.3s ease, border-color 0.3s', 
-        border: '1px solid rgba(255,255,255,0.05)',
-        flexShrink: 0
-      }} 
-      // Efeito de ampliação ao passar o mouse (apenas desktop)
-      onMouseEnter={(e) => { if(!esCelular) e.currentTarget.style.transform = 'scale(1.05)'; }} 
-      onMouseLeave={(e) => { if(!esCelular) e.currentTarget.style.transform = 'scale(1)'; }}
+    <div
+      onClick={() => setMidiaSelecionada(m)}
+      style={{
+        minWidth: larguraCard,
+        width: larguraCard,
+        height: alturaCard,
+        position: 'relative',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        backgroundColor: '#111',
+        boxShadow: '0 18px 40px rgba(0,0,0,0.25)',
+        cursor: 'pointer',
+        transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+        flexShrink: 0,
+      }}
+      onMouseEnter={(e) => { if (!esCelular) e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)'; }}
+      onMouseLeave={(e) => { if (!esCelular) e.currentTarget.style.transform = 'translateY(0) scale(1)'; }}
     >
-      {/* Título do filme em destaque no card */}
-      <span style={{ fontWeight: 'bold', fontSize: esCelular ? '0.8rem' : '0.9rem', textShadow: '2px 2px 6px #000', color: '#fff' }}>{m.title}</span>
+      <img
+        src={m.posterImage || m.coverImage}
+        alt={m.title}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block'
+        }}
+      />
+
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(to top, rgba(0,0,0,0.9) 18%, rgba(0,0,0,0.3) 45%, transparent 100%)'
+      }} />
+
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        padding: '12px',
+        display: 'flex',
+        alignItems: 'flex-end'
+      }}>
+        <span 
+        translate="no"
+        style={{
+          color: '#fff',
+          fontWeight: 'bold',
+          fontSize: esCelular ? '0.85rem' : '0.95rem',
+          lineHeight: '1.2',
+          textShadow: '0 2px 8px rgba(0,0,0,0.7)'
+        }}>
+          {m.title}
+        </span>
+      </div>
     </div>
   );
 };

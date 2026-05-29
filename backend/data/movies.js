@@ -19,33 +19,70 @@ const movies = [
   // --- SCI-FI / SUSPENSE / LANÇAMENTOS ---
   {
     id: 1,
-    profileIds: [1, 2, 3, 4, 5, 6],
-    title: "Mr. Robot",
-    description: "Um jovem engenheiro de segurança cibernética de dia e hacker vigilante à noite se vê no meio de uma conspiração global.",
+    profileIds: [1, 2, 5],
+    title: "Dark",
+    description: "Dark é uma complexa trama de mistério e ficção científica onde o desaparecimento de uma criança revela segredos sombrios de quatro famílias interligadas. A busca por respostas desbloqueia uma conspiração de viagens no tempo que conecta várias gerações em um ciclo temporal inevitável",
     mediaType: "serie",
-    genres: ["suspense", "lancamentos"],
-    coverImage: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&auto=format&fit=crop&q=60",
-    bannerImage: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=1200&auto=format&fit=crop&q=60",
-    trailerUrl: "https://www.youtube.com/embed/nJvZV648W18",
+    genres: ["suspense"],
+    coverImage: "https://tse4.mm.bing.net/th/id/OIP.DDVsQMKfO45p7rXJGKbu9wHaLH?pid=Api&P=0&h=180",
+    bannerImage: "https://tse2.mm.bing.net/th/id/OIP.J4nRbtZn33U-FDVdPPKrFAHaEK?pid=Api&P=0&h=180",
+    trailerUrl: "https://www.youtube.com/watch?v=JCCssUOtn2E",
     featured: true
   },
-  {
-    id: 4,
-    profileIds: [1, 2, 3, 4, 5, 6],
-    title: "Interestelar",
-    description: "Uma equipe de exploradores viaja através de um buraco de minhoca no espaço para tentar garantir a sobrevivência da humanidade.",
-    mediaType: "filme",
-    genres: ["ficcao cientifica", "classicos"],
-    coverImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&auto=format&fit=crop&q=60",
-    bannerImage: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200&auto=format&fit=crop&q=60",
-    trailerUrl: "https://www.youtube.com/embed/zSWdZVtXT7E",
+    {
+    id: 2,
+    profileIds: [1, 2, 3, 5],
+    title: "Stranger Things",
+    description: "Stranger Things acompanha um grupo de amigos que, ao investigar o sumiço misterioso de um deles, descobre experimentos secretos do governo, uma garota com poderes telecinéticos e uma dimensão alternativa sombria habitada por monstros.",
+    mediaType: "serie",
+    genres: ["suspense", "acao"],
+    coverImage: "https://tse1.mm.bing.net/th/id/OIP.whYKzWvW_OWccVEFgcWhwQHaKX?pid=Api&P=0&h=180",
+    bannerImage: "https://tse2.mm.bing.net/th/id/OIP.J4nRbtZn33U-FDVdPPKrFAHaEK?pid=Api&P=0&h=180",
+    trailerUrl: "https://www.youtube.com/watch?v=RMmGQNNl164",
     featured: false
   },
-
+  {
+    id: 3,
+    profileIds: [1, 2, 5],
+    title: "From",
+    description: "From (Origem) acompanha os moradores de uma cidade misteriosa no interior dos Estados Unidos que prende todos que nela entram. Enquanto tentam manter a sanidade e buscar uma saída, eles precisam sobreviver a criaturas aterrorizantes que saem da floresta ao anoitecer.",
+    mediaType: "serie",
+    genres: ["suspense", "misterio", "terror"],
+    coverImage: "https://tse3.mm.bing.net/th/id/OIP.vRZ0VJPEdhXSBaHF_6oFiAHaLH?pid=Api&P=0&h=180",
+    bannerImage: "https://tse2.mm.bing.net/th/id/OIP.J4nRbtZn33U-FDVdPPKrFAHaEK?pid=Api&P=0&h=180",
+    trailerUrl: "https://www.youtube.com/watch?v=sYXr3ZgyS2U",
+    featured: false
+  },
+  // --- ANIME / ANIMAÇÃO ---
+  {
+    id: 5,
+    profileIds: [1, 2, 3, 5],
+    title: "Naruto",
+    description: "Naruto conta a história de um jovem ninja órfão e rejeitado que sonha em se tornar o líder máximo de sua vila (Hokage). Através de muita determinação, laços de amizade e superação, ele luta para conquistar o respeito de todos e proteger o mundo ninja.",
+    mediaType: "anime",
+    genres: ["acao", "animacao"],
+    coverImage: "https://tse2.mm.bing.net/th/id/OIP.r3FvvLaX-mzlpU3FVfsukQHaLH?pid=Api&P=0&h=180",
+    bannerImage: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=60",
+    trailerUrl: "https://www.youtube.com/watch?v=7KoGSa4F3Xs",
+    featured: false
+  },
+    // --- ANIME / ANIMAÇÃO ---
+  {
+    id: 6,
+    profileIds: [1, 2, 3],
+    title: "Dragon Ball Super",
+    description: "Dragon Ball Super acompanha as novas e grandiosas batalhas de Goku e seus amigos contra divindades universais e guerreiros de outras dimensões. Buscando proteger a Terra, eles alcançam níveis de poder inéditos e participam de um torneio que define a sobrevivência de todo o multiverso.",
+    mediaType: "anime",
+    genres: ["acao", "animacao"],
+    coverImage: "https://tse4.mm.bing.net/th/id/OIP.gQKw-ZqAfuiJHLekgj2nYQHaKe?pid=Api&P=0&h=180",
+    bannerImage: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop&q=60",
+    trailerUrl: "https://www.youtube.com/watch?v=JQtIATMIpu8",
+    featured: false
+  },
   // --- ANIME / ANIMAÇÃO ---
   {
     id: 2,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "Demon Slayer",
     description: "Tanjiro Kamado luta contra demônios terríveis em uma jornada implacável para salvar sua irmã e vingar sua família.",
     mediaType: "anime",
@@ -55,35 +92,48 @@ const movies = [
     trailerUrl: "https://www.youtube.com/embed/VQGCKyvzIM4",
     featured: false
   },
-  {
-    id: 5,
-    profileIds: [1, 2, 3, 4, 5, 6],
-    title: "Cyberpunk: Edgerunners",
-    description: "Um garoto de rua tentando sobreviver em uma cidade do futuro obcecada por tecnologia e modificação corporal se torna um mercenário fora da lei.",
-    mediaType: "anime",
-    genres: ["acao", "ficcao cientifica", "lancamentos"],
-    coverImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&auto=format&fit=crop&q=60",
-    bannerImage: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop&q=60",
-    trailerUrl: "https://www.youtube.com/embed/JtqIas3bYhg",
+  // --- FILME ---
+    {
+    id: 4,
+    profileIds: [2, 4],
+    title: "Shrek",
+    description: "Shrek é um ogro que vive em uma floresta, mas é forçado a deixar seu lar quando o rei põe um decreto proibindo todos os habitantes de sua terra.",
+    mediaType: "filme",
+    genres: ["fantasia", "aventura", "animacao"],
+    coverImage: "https://tse1.mm.bing.net/th/id/OIP.Qapy56z-Rz0XxQ77VbjAiwHaLH?pid=Api&P=0&h=180",
+    bannerImage: "https://tse4.mm.bing.net/th/id/OIP.75Roa8EqyDlHO2ChE0spZAHaEU?pid=Api&P=0&h=180",
+    trailerUrl: "https://www.youtube.com/watch?v=4LT5Km2svpQ",
     featured: false
   },
 
-  // --- TERROR ---
+  {
+    id: 5,
+    profileIds: [2],
+    title: "Alice no País das Maravilhas",
+    description: "Alice no País das Maravilhas acompanha uma jovem curiosa que cai em uma toca de coelho e vai parar em um mundo fantástico e absurdo. Lá, ela interage com criaturas excêntricas e desafia a tirania da Rainha de Copas para conseguir voltar para casa.",
+    mediaType: "filme",
+    genres: ["fantasia", "aventura"],
+    coverImage: "https://tse2.mm.bing.net/th/id/OIP.wlnW01sj6EOvrY0j0z3-qwHaLG?pid=Api&P=0&h=180",
+    bannerImage: "https://tse4.mm.bing.net/th/id/OIP.75Roa8EqyDlHO2ChE0spZAHaEU?pid=Api&P=0&h=180",
+    trailerUrl: "https://www.youtube.com/watch?v=uJqMRLFezbo",
+    featured: true
+  },
+
   {
     id: 6,
-    profileIds: [1, 2, 3, 4, 5, 6],
-    title: "O Despertar da Floresta",
-    description: "Um grupo de amigos isolado em uma cabana remota descobre um diário antigo que liberta forças demoníacas implacáveis.",
+    profileIds: [1, 2],
+    title: "A Vida é Bela",
+    description: "A Vida é Bela narra a emocionante história de um pai judeu que usa sua imaginação e bom humor para proteger o filho pequeno em um campo de concentração nazista. Ele transforma a terrível realidade em um jogo fictício para salvar a inocência e a vida do menino.",
     mediaType: "filme",
-    genres: ["terror", "suspense"],
-    coverImage: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?w=400&auto=format&fit=crop&q=60",
+    genres: ["drama", "comedia", "classicos"],
+    coverImage: "https://tse4.mm.bing.net/th/id/OIP.G5xaPNl82v0Pv44UBP5fiwAAAA?pid=Api&P=0&h=180",
     bannerImage: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1200&auto=format&fit=crop&q=60",
-    trailerUrl: "https://www.youtube.com/embed/kRkS8A7I-r8",
+    trailerUrl: "https://www.youtube.com/watch?v=0dyP53zq0UQ",
     featured: false
   },
   {
     id: 7,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "Arquivos do Além",
     description: "Investigadores paranormais encaram o caso mais aterrorizante de suas vidas ao tentar limpar uma residência assombrada por um espírito secular.",
     mediaType: "serie",
@@ -97,7 +147,7 @@ const movies = [
   // --- COMÉDIA ---
   {
     id: 8,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "De Volta ao Jogo",
     description: "Dois amigos fracassados planejam o golpe perfeito para mudar de vida, mas tudo o que conseguem é se meter em confusões hilárias com a máfia.",
     mediaType: "filme",
@@ -109,7 +159,7 @@ const movies = [
   },
   {
     id: 9,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "TI: Emergência de Risos",
     description: "O dia a dia caótico e cômico de uma equipe de suporte de tecnologia lidando com os usuários mais bizarros da empresa.",
     mediaType: "serie",
@@ -123,7 +173,7 @@ const movies = [
   // --- ROMANCE ---
   {
     id: 10,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "Conexões Cruzadas",
     description: "Dois desenvolvedores de cidades diferentes começam a colaborar em um código de código aberto e acabam encontrando uma paixão inesperada.",
     mediaType: "filme",
@@ -135,7 +185,7 @@ const movies = [
   },
   {
     id: 11,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "Amor em Linhas de Código",
     description: "Uma história emocionante de encontros e desencontros na era digital, mostrando que o amor verdadeiro não segue algoritmos.",
     mediaType: "serie",
@@ -149,7 +199,7 @@ const movies = [
   // --- BIOGRÁFICOS / DOCUMENTÁRIOS ---
   {
     id: 3,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "O Dilema das Redes",
     description: "Especialistas e profissionais do Vale do Silício alertam sobre o impacto humano assustador das redes sociais nas democracias e nos indivíduos.",
     mediaType: "documentario",
@@ -161,7 +211,7 @@ const movies = [
   },
   {
     id: 12,
-    profileIds: [1, 2, 3, 4, 5, 6],
+    profileIds: [1, 3, 4, 5, 6],
     title: "Ada Lovelace: A Primeira",
     description: "A fascinante cinebiografia de Ada Lovelace, a matemática do século XIX que enxergou o potencial das máquinas e escreveu o primeiro algoritmo de computador da história.",
     mediaType: "filme",
