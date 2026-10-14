@@ -14,6 +14,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Login from './pages/Login.jsx' 
 import App from './App.jsx' // Componente principal: vitrine de filmes
 
+// Import global styles
+import './styles.css'
+
 // ========== CONFIGURAÇÃO DE ROTAS ==========
 // Define as rotas (caminhos) e qual componente será exibido em cada uma
 const router = createBrowserRouter([
