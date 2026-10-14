@@ -66,8 +66,6 @@ app.get("/", (req, res) => {
 });
 
 // ========== ROTAS API (prefixo /api) ==========
-
-// Lista normalizada de títulos
 app.get("/api/movies", (req, res) => {
   try {
     // possibilidade de filtrar por type ou genre via query params
@@ -87,7 +85,6 @@ app.get("/api/movies", (req, res) => {
   }
 });
 
-// Obter destaque
 app.get("/api/featured", (req, res) => {
   try {
     const featuredMovie = catalog.find((movie) => movie.featured === true) || catalog[0] || null;
@@ -100,7 +97,6 @@ app.get("/api/featured", (req, res) => {
   }
 });
 
-// Detalhes por id
 app.get("/api/movies/:id", (req, res) => {
   try {
     const id = Number(req.params.id);
