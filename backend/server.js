@@ -1,155 +1,116 @@
 // ========================================
-// SERVIDOR PLAYFAMILY - BACKEND
+// SERVIDOR PLAYFAMILY - BACKEND (REFATORADO)
 // ========================================
-// API REST que fornece dados de filmes/séries e autentica usuários
-// Executa na porta 3000 e se comunica com o frontend React
-// Este servidor implementa o padrão RESTful com rotas GET e POST
 
-// ========== IMPORTAÇÕES ==========
-
-// Importa o Express, framework minimalista para criar servidores HTTP
-// Express simplifica a criação de rotas, middlewares e respostas
 const express = require("express");
-
-// Importa o CORS (Cross-Origin Resource Sharing)
-// Permite que o frontend (em http://localhost:5173) acesse as rotas do backend
-// Sem CORS, o navegador bloquearia as requisições por segurança
 const cors = require("cors");
-
-// Importa a lista de filmes/séries/animes do arquivo de dados
+const jwt = require("jsonwebtoken");
 const movies = require("./data/movies");
 
-// ========== INICIALIZAÇÃO ==========
-
-// Cria a aplicação Express
 const app = express();
 
-// ========== CONFIGURAÇÃO DE MIDDLEWARES ==========
-// Middlewares são funções que processam requisições antes de chegar às rotas
+// Configurações de Ambiente
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || "playfamily_chave_secreta_super_segura_2026";
 
-// Habilita CORS: permite requisições do frontend
+// ========== MIDDLEWARES ==========
 app.use(cors());
-
-// Middleware que converte corpos de requisição JSON em objetos JavaScript
-// Necessário para processar dados enviados pelo login (email e password)
 app.use(express.json());
 
 // ========== ROTAS DA API ==========
 
-// ROTA 1: GET / (raiz)
-// ============================================
-// Acesso: http://localhost:3000/
-// Método: GET
-// Retorna: mensagem de boas-vindas (texto simples)
-// Propósito: verificar se o servidor está funcionando
+// Rota de Healthcheck
 app.get("/", (req, res) => {
-  res.send("API PlayFamily funcionando 🚀");
+  res.status(200).json({ status: "OK", message: "API PlayFamily rodando com sucesso! 🚀" });
 });
 
-// ROTA 2: GET /movies
-// ============================================
-// Acesso: http://localhost:3000/movies
-// Método: GET
-// Parâmetros: nenhum
-// Retorna: Array JSON com todos os filmes/séries/animes
-// Propósito: carregar o catálogo completo no frontend
+// Listar todos os filmes/séries/animes
 app.get("/movies", (req, res) => {
-  // Retorna o array 'movies' em formato JSON
-  res.json(movies);
-});
-
-// ROTA 3: GET /featured
-// ============================================
-// Acesso: http://localhost:3000/featured
-// Método: GET
-// Parâmetros: nenhum
-// Retorna: um único objeto JSON (o filme em destaque)
-// Propósito: obter o filme marcado como featured: true para exibir no banner
-app.get("/featured", (req, res) => {
-  // Procura o primeiro filme com a propriedade featured = true
-  const featuredMovie = movies.find(
-    (movie) => movie.featured === true
-  );
-
-  // Retorna o filme encontrado (ou null se não houver)
-  res.json(featuredMovie);
-});
-
-// ROTA 4: GET /movies/:id
-// ============================================
-// Acesso: http://localhost:3000/movies/1, http://localhost:3000/movies/2, etc
-// Método: GET
-// Parâmetro: :id (número do filme na URL)
-// Retorna: um único objeto JSON (o filme específico) ou erro 404
-// Propósito: obter detalhes de um filme específico
-app.get("/movies/:id", (req, res) => {
-  // Extrai o parâmetro 'id' da URL e converte para número
-  // req.params.id vem como string ("1", "2") e precisa ser número (1, 2)
-  const id = Number(req.params.id);
-
-  // Procura no array 'movies' por um filme com este id
-  const movie = movies.find(
-    (item) => item.id === id
-  );
-
-  // Se o filme não foi encontrado
-  if (!movie) {
-    // Retorna status HTTP 404 (Não Encontrado) com mensagem de erro
-    return res.status(404).json({
-      message: "Filme não encontrado"
-    });
+  try {
+    res.status(200).json(movies);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar catálogo de filmes." });
   }
-
-  // Se encontrou o filme, retorna-o em JSON
-  return res.json(movie);
 });
 
-// ROTA 5: POST /login
-// ============================================
-// Acesso: http://localhost:3000/login
-// Método: POST (envia dados no corpo da requisição)
-// Corpo esperado: { "email": "...", "password": "..." }
-// Retorna: sucesso com dados do usuário ou erro 401
-// Propósito: autenticar o usuário e liberar acesso ao catálogo
-app.post("/login", (req, res) => {
-  // Desestrutura email e password do corpo da requisição
-  // O frontend envia: { email: "user@PlayFamily.com", password: "123456" }
-  const { email, password } = req.body;
+// Obter filme em destaque (Banner)
+app.get("/featured", (req, res) => {
+  try {
+    const featuredMovie = movies.find((movie) => movie.featured === true);
+    if (!featuredMovie) {
+      return res.status(404).json({ message: "Nenhum filme em destaque encontrado." });
+    }
+    res.status(200).json(featuredMovie);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar filme em destaque." });
+  }
+});
 
-  // Valida as credenciais contra dados pré-definidos
-  // Em uma aplicação real, isso consultaria um banco de dados com hash de senhas
-  // Credenciais válidas: user@PlayFamily.com / 123456
-  if (
-    email === "user@PlayFamily.com" &&
-    password === "123456"
-  ) {
-    // Login bem-sucedido
-    // Retorna status 200 (padrão) com sucesso e dados do usuário
-    return res.json({
-      success: true,
-      message: "Login realizado com sucesso",
-      user: {
+// Obter detalhes de um filme específico por ID
+app.get("/movies/:id", (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "ID do filme deve ser um número válido." });
+    }
+
+    const movie = movies.find((item) => item.id === id);
+
+    if (!movie) {
+      return res.status(404).json({ message: "Filme não encontrado." });
+    }
+
+    return res.status(200).json(movie);
+  } catch (error) {
+    return res.status(500).json({ message: "Erro ao buscar detalhes do filme." });
+  }
+});
+
+// Autenticação com geração de Token JWT
+app.post("/login", (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "E-mail e senha são obrigatórios." });
+    }
+
+    // Credencial simulada (em produção, consultar banco de dados com hash de senha)
+    if (email === "user@PlayFamily.com" && password === "123456") {
+      const user = {
+        id: "usr_101",
         name: "Usuário PlayFamily",
         email: email
-      }
-    });
-  }
+      };
 
-  // Login falhou: email ou senha incorretos
-  // Retorna status HTTP 401 (Não Autorizado) com mensagem de erro
-  return res.status(401).json({
-    success: false,
-    message: "Email ou senha inválidos"
-  });
+      // Geração do token JWT válido por 8 horas
+      const token = jwt.sign(user, JWT_SECRET, { expiresIn: "8h" });
+
+      return res.status(200).json({
+        success: true,
+        message: "Login realizado com sucesso",
+        token,
+        user
+      });
+    }
+
+    return res.status(401).json({
+      success: false,
+      message: "Email ou senha inválidos"
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Erro interno no servidor ao realizar login." });
+  }
+});
+
+// Middleware Global de Tratamento de Erros
+app.use((err, req, res, next) => {
+  console.error("Erro inesperado no servidor:", err.stack);
+  res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
 });
 
 // ========== INICIAR O SERVIDOR ==========
-// Inicia o servidor na porta 3000
-// A porta 3000 é o padrão para APIs de desenvolvimento
-app.listen(3000, () => {
-  // Callback executado quando o servidor está pronto para receber requisições
-  // Mostra mensagem no console do terminal
-  console.log(
-    "Servidor rodando em http://localhost:3000"
-  );
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
