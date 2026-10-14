@@ -1,85 +1,101 @@
-// Importa useEffect e useState do React
-import { useEffect, useState } from "react";
+// ========================================
+// PÁGINA HOME - PLAYFAMILY (REFATORADA)
+// ========================================
 
-// Importa os componentes usados na página Home
-import Header from "../components/Header";
+import { useState, useEffect } from "react";
 import FeaturedMovie from "../components/FeaturedMovie";
 import MovieRow from "../components/MovieRow";
 
-// Cria o componente da página inicial
 function Home() {
-  // Estado que guarda a lista de filmes vinda do backend
-  const [movies, setMovies] = useState([]);
-
-  // Estado que guarda o filme em destaque
   const [featuredMovie, setFeaturedMovie] = useState(null);
+  const [moviesList, setMoviesList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Lista de categorias que serão exibidas na tela
-  const categories = ["Lançamentos", "Ação", "Séries", "Documentários"];
-
-  // useEffect executa uma ação quando a página carrega
   useEffect(() => {
-    // Função assíncrona para buscar dados no backend
-    async function loadData() {
-      try {
-        // Busca todos os filmes na API
-        const moviesResponse = await fetch("http://localhost:3000/movies");
+    // AbortController cancela requisições se o componente desmontar
+    const controller = new AbortController();
+    const { signal } = controller;
 
-        // Converte a resposta dos filmes para JSON
+    async function fetchHomeData() {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Busca simultânea de dados para otimizar o tempo de carregamento
+        const [featuredResponse, moviesResponse] = await Promise.all([
+          fetch("http://localhost:3000/featured", { signal }),
+          fetch("http://localhost:3000/movies", { signal }),
+        ]);
+
+        if (!featuredResponse.ok || !moviesResponse.ok) {
+          throw new Error("Falha ao carregar catálogo do PlayFamily.");
+        }
+
+        const featuredData = await featuredResponse.json();
         const moviesData = await moviesResponse.json();
 
-        // Busca o filme em destaque na API
-        const featuredResponse = await fetch("http://localhost:3000/featured");
-
-        // Converte a resposta do filme em destaque para JSON
-        const featuredData = await featuredResponse.json();
-
-        // Salva os filmes no estado
-        setMovies(moviesData);
-
-        // Salva o filme em destaque no estado
         setFeaturedMovie(featuredData);
-      } catch (error) {
-        // Mostra erro no console caso o backend não responda
-        console.log("Erro ao buscar dados:", error);
+        setMoviesList(moviesData);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(err.message || "Erro de conexão com o servidor.");
+        }
+      } finally {
+        setIsLoading(false);
       }
     }
 
-    // Chama a função que carrega os dados
-    loadData();
-  }, []); // [] faz o useEffect rodar apenas uma vez ao abrir a página
+    fetchHomeData();
 
-  // Retorna o JSX da página Home
+    return () => controller.abort();
+  }, []);
+
+  // Exibição de estado de carregamento
+  if (isLoading) {
+    return (
+      <div className="home-loading">
+        <div className="spinner"></div>
+        <p>Carregando catálogo PlayFamily...</p>
+      </div>
+    );
+  }
+
+  // Exibição de estado de erro
+  if (error) {
+    return (
+      <div className="home-error">
+        <h2>Ops! Algo deu errado.</h2>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Tentar novamente</button>
+      </div>
+    );
+  }
+
+  // Agrupamento dinâmico por tipo/categoria
+  const moviesOnly = moviesList.filter((item) => item.type === "movie");
+  const seriesOnly = moviesList.filter((item) => item.type === "series");
+  const animesOnly = moviesList.filter((item) => item.type === "anime");
+
   return (
-    <div>
-      {/* Cabeçalho da aplicação */}
-      <Header />
+    <div className="home-container">
+      {/* Banner Principal em Destaque */}
+      {featuredMovie && <FeaturedMovie movie={featuredMovie} />}
 
-      {/* Componente que mostra o filme em destaque */}
-      <FeaturedMovie movie={featuredMovie} />
-
-      {/* Área principal onde aparecem as categorias de filmes */}
-      <main className="content">
-        {/* Percorre cada categoria da lista */}
-        {categories.map((category) => {
-          // Filtra apenas os filmes que pertencem à categoria atual
-          const filteredMovies = movies.filter(
-            (movie) => movie.category === category
-          );
-
-          // Renderiza uma fileira de filmes para cada categoria
-          return (
-            <MovieRow
-              key={category}
-              title={category}
-              movies={filteredMovies}
-            />
-          );
-        })}
-      </main>
+      {/* Fileiras de Conteúdo Agrupadas */}
+      <section className="lists">
+        {moviesOnly.length > 0 && (
+          <MovieRow title="Filmes Recomendados" items={moviesOnly} />
+        )}
+        {seriesOnly.length > 0 && (
+          <MovieRow title="Séries em Alta" items={seriesOnly} />
+        )}
+        {animesOnly.length > 0 && (
+          <MovieRow title="Animes em Destaque" items={animesOnly} />
+        )}
+      </section>
     </div>
   );
 }
 
-// Exporta a página Home para ser usada nas rotas
 export default Home;
