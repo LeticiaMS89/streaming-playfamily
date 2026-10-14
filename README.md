@@ -1,252 +1,100 @@
-# 🎬 PlayFamily — Plataforma de Streaming Full Stack
+# 🎬 PlayFamily — Plataforma de Streaming (em Português)
 
-Uma aplicação web full‑stack inspirada nas principais plataformas de streaming do mercado. O PlayFamily oferece autenticação via JWT, navegação por categorias, banners em destaque, fileiras/carrosséis de títulos e páginas de detalhes com informações completas. O objetivo do projeto é servir como base prática para aprender e demonstrar padrões de front-end reativos com React e back-end leve em Node.js/Express.
+PlayFamily é um projeto educacional/portfólio que simula uma plataforma de streaming com uma aplicação frontend em React (Vite) e um backend simples em Node.js + Express. O objetivo é demonstrar padrões de arquitetura full‑stack, autenticação JWT e consumo de API a partir de um SPA.
 
-> Nota: Este projeto foi desenvolvido para fins didáticos, estudo prático de arquitetura Full Stack e composição de portfólio técnico.
+## 🚀 Principais mudanças aplicadas neste repositório
 
----
-
-## 🚀 Sumário
-
-- Sobre
-- Principais funcionalidades
-- Arquitetura e tecnologias
-- Estrutura do repositório
-- Pré‑requisitos
-- Instalação e execução (desenvolvimento e produção)
-- Variáveis de ambiente
-- Endpoints principais (API)
-- Autenticação (fluxo JWT)
-- Testes
-- Deploy sugerido
-- Boas práticas / Checklist de qualidade
-- Contribuições
-- Licença e contato
+- Padronizei API para o namespace /api (ex.: /api/auth/login, /api/movies).
+- Backend configurado para rodar em porta 4000 por padrão.
+- Frontend usa variável de ambiente VITE_API_URL (ex.: http://localhost:4000/api) em vez de URLs hardcoded.
+- Comentários e documentação em português.
+- Ajustes em package.json (raiz e backend) e README atualizado.
 
 ---
 
-## ℹ️ Sobre
+## Stack
+- **Linguagem:** JavaScript (ESM no frontend, CommonJS no backend)
+- **Frontend:** React 19 + Vite
+- **Backend:** Node.js + Express
+- **Autenticação:** JWT (jsonwebtoken)
 
-PlayFamily é um projeto educativo/portfolio que simula uma plataforma de streaming com foco em:
+## Estrutura relevante do repositório
 
-- Experiência do usuário (navegação, carrosséis, destaque).
-- Boas práticas de organização de front-end (componentização, roteamento protegido).
-- API REST simples com autenticação (JWT) para proteger rotas e gerenciar sessão.
-- Código estruturado para facilitar deploy e evolução.
-
----
-
-## ✨ Principais funcionalidades
-
-- Autenticação: registro, login e rotas protegidas com JWT.
-- Feed por categorias: Início, Séries, Filmes, Doramas, Realitys, Animes.
-- Banner em destaque (Featured) com CTA para reprodução/detalhes.
-- Fileiras (MovieRow): carrosséis horizontais com navegação por botões e suporte touch.
-- Página de detalhes: sinopse, classificação, ano, trailer/preview.
-- Layout responsivo com técnicas de CSS moderno (Flexbox, Grid, glassmorphism).
-- Consumo de API com Fetch + AbortController para cancelamento seguro de requisições.
-- Suporte básico a CORS no backend.
-
----
-
-## 🏗 Arquitetura e Tecnologias
-
-Frontend
-- React 19 (Vite)
-- React Router DOM v7
-- CSS3 (Flexbox & Grid), design responsivo
-- Fetch API, AbortController
-
-Backend
-- Node.js (>=18) + Express
-- JSON Web Token (JWT) para autenticação
-- CORS para integração entre front e back
-- Armazenamento: (pode ser memória/JSON/localstore em dev — adapte para DB real se necessário)
-
-Ferramentas
-- npm
-- Git
-
----
-
-## 📁 Estrutura do repositório (exemplo)
-
-- backend/           # servidor Express (API)
-  - src/
-    - controllers/
-    - routes/
-    - middlewares/
-    - services/
-  - package.json
-- frontend/          # app React (Vite)
-  - src/
-    - components/
-    - pages/
-    - hooks/
-    - services/      # chamadas à API
-  - package.json
-- README.md
-- .gitignore
-
-A estrutura real pode variar — o importante é manter separação clara entre client e server.
-
----
-
-## ⚙️ Pré‑requisitos
-
-- Node.js v18 ou superior
-- npm (ou yarn)
-- Git
-
----
-
-## 🛠 Instalação e execução
-
-1) Clone o repositório
-```bash
-git clone https://github.com/LeticiaMS89/streaming-playfamily.git
-cd streaming-playfamily
+```
+backend/             # servidor Express (API)
+  data/              # dados mock (movies.js)
+  server.js          # servidor principal (rotas /api/...)
+  package.json
+src/                 # frontend React (Vite)
+  components/        # componentes UI (FeaturedMovie, MovieRow, ...)
+  pages/             # páginas (Login, Home, MovieDetails)
+  main.jsx           # ponto de entrada que monta <App /> dentro do BrowserRouter
+  App.jsx            # roteamento e layout principal
+  styles.css
+index.html           # HTML base (lang=pt-BR)
+.env.example         # variáveis de ambiente de exemplo
+README.md
 ```
 
-2) Backend
+## Como rodar localmente (curto caminho)
+
+1) Instalar dependências
+
 ```bash
+# Raiz — frontend
+npm install
+
+# Backend
 cd backend
 npm install
-# Em desenvolvimento
-npm run dev        # se houver (ex.: nodemon)
-# Ou
-npm start
+cd ..
 ```
 
-3) Frontend
-```bash
-cd ../frontend
-npm install
-npm run dev        # inicia o Vite (modo desenvolvimento)
-# Para gerar build de produção
-npm run build
-# Servir build estático (ex.: serve, vercel, netlify)
-```
+2) Configurar variáveis de ambiente
 
-Observação: ajuste os scripts conforme os pacotes configurados em package.json.
+- Crie um arquivo `.env` no backend com as variáveis (ex.: `backend/.env`) ou use as defaults.
+- Crie um arquivo `.env.local` no frontend com a variável Vite:
 
----
-
-## 🔐 Variáveis de ambiente (exemplos)
-
-Backend (.env)
-```
-PORT=4000
-JWT_SECRET=uma_chave_secreta_forte
-JWT_EXPIRES_IN=7d
-# Se usar DB
-DATABASE_URL=...
-```
-
-Frontend (.env)
 ```
 VITE_API_URL=http://localhost:4000/api
 ```
 
-Não comite arquivos `.env` em repositórios públicos. Use secrets/variáveis do provedor no deploy.
+3) Iniciar backend e frontend
+
+```bash
+# Em um terminal: backend
+cd backend
+npm run dev
+
+# Em outro terminal: frontend
+npm run dev
+```
+
+O frontend estará disponível em http://localhost:5173 (porta padrão do Vite) e consumirá a API em http://localhost:4000/api.
 
 ---
 
-## 📡 Endpoints principais (resumo)
+## Endpoints principais (resumo)
 
-Auth
-- POST /api/auth/register — registro de usuário (nome, email, senha)
-- POST /api/auth/login — login → retorna token JWT
-- GET /api/auth/me — perfil do usuário (rota protegida)
-
-Conteúdo (exemplo)
-- GET /api/movies — lista de títulos (aceita query params: category, page)
+- POST /api/auth/login — login (body: { email, password }) → retorna { token, user }
+- GET /api/auth/me — perfil do usuário (rota protegida com Authorization: Bearer <token>)
+- GET /api/movies — lista de títulos (suporta query params: type, genre)
 - GET /api/movies/:id — detalhes do título
 - GET /api/featured — item em destaque
 
-Proteções: rotas que retornam dados pessoais ou exigem autenticação devem validar o JWT enviado no header Authorization: Bearer <token>.
+---
+
+## Boas práticas / Observações
+
+- Tokens JWT atualmente são armazenados no localStorage (simples para demo). Para produção, usar cookies httpOnly + refresh tokens.
+- A base de dados é mockada (backend/data/movies.js). Substitua por um BD real (Postgres, MongoDB) em produção.
+- Não comite arquivos `.env` contendo secrets.
 
 ---
 
-## 🔁 Fluxo de autenticação (JWT) — Resumo
+## Próximos passos que posso automatizar (opcional)
+- Criar `.github/workflows/ci.yml` para rodar lint e build
+- Adicionar testes (Jest / React Testing Library / Supertest)
+- Migrar dependências entre workspaces se quiser separar frontend/backend no mesmo monorepo
 
-1. Usuário envia credenciais para /auth/login.
-2. Backend valida credenciais e emite um token JWT assinado (contendo userId, roles, exp).
-3. Frontend armazena token (recomendação: armazenar em memória ou cookies httpOnly; evitar localStorage em produção).
-4. Requisições a rotas protegidas enviam header Authorization: Bearer <token>.
-5. Backend valida token e garante acesso.
-
-Boas práticas:
-- Usar tokens curtos e refresh tokens quando necessário.
-- Proteger cookies com httpOnly, secure e sameSite.
-
----
-
-## ✅ Boas práticas e checklist de qualidade
-
-- Tratar errors e retornar mensagens e códigos HTTP adequados (400/401/403/404/500).
-- Validar entradas (ex.: express-validator / zod).
-- Manter secrets fora do repositório.
-- Testes unitários e E2E para fluxos críticos (login, exibição de conteúdo).
-- Linting (ESLint) e formatação (Prettier).
-- Types (TypeScript) podem aumentar robustez — considerar migração.
-
----
-
-## 🚀 Deploy (sugestões)
-
-Front-end
-- Vercel / Netlify / Surge — hospedagem de SPA via build estático.
-
-Back-end
-- Railway / Render / Heroku / Fly.io — hospedar Node.js/Express.
-- Se usar banco: provisionar banco (Postgres, MongoDB) e apontar DATABASE_URL.
-
-CI/CD
-- GitHub Actions para rodar lint, testes e build, e para deploy automático a partir de main.
-
----
-
-## 🧪 Testes
-
-- Adicione testes unitários para funções críticas (ex.: autenticação, serviços).
-- Ferramentas: Jest + React Testing Library (frontend), Jest / Supertest (backend).
-- Exemplo de script:
-```json
-"scripts": {
-  "test": "jest",
-  "test:watch": "jest --watch"
-}
-```
-
----
-
-## 🤝 Como contribuir
-
-1. Fork o projeto
-2. Crie uma branch com a feature ou fix: feature/nome-descritivo
-3. Faça commits claros e atômicos
-4. Abra um Pull Request descrevendo a mudança
-5. Responda a comentários e ajuste conforme necessário
-
-Sugestões de melhorias: adicionar banco de dados persistente, endpoints para avaliações, sistema de favoritos, paginação/filtragem avançada, testes E2E.
-
----
-
-## 🧾 Licença
-
-Este projeto está sob a licença MIT. A licença foi adicionada ao repositório para registrar uso acadêmico e didático do código.
-
----
-
-## 📞 Contato
-
-- Autor: LeticiaMS89
-- Repositório: https://github.com/LeticiaMS89/streaming-playfamily
-
----
-
-Obrigado por usar o PlayFamily como base para aprender e demonstrar habilidades full‑stack. Se quiser, eu posso:
-- Atualizar (comitar) este README diretamente no repositório (preciso da confirmação do branch para commitar).
-- Gerar um arquivo LICENSE (ex.: MIT).
-- Criar templates de issues/PR ou um workflow de GitHub Actions para CI.
+Se quiser, eu comito templates adicionais (CI, .env.example no backend, instruções de deploy) — diga quais prefere.
