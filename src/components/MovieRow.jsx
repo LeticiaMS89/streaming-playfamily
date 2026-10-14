@@ -1,39 +1,81 @@
 // ========================================
-// COMPONENTE: FILEIRA DE FILMES
+// FILEIRA DE FILMES/SÉRIES - PLAYFAMILY (REFATORADA)
 // ========================================
-// Componente que exibe uma categoria/fileira de filmes/séries
-// Utiliza o componente MovieCard para exibir cada filme em um carroussel
 
-// Importa o componente que exibe cada filme individual
-import MovieCard from "./MovieCard";
+import { useRef } from "react";
+import { Link } from "react-router-dom";
 
-// Recebe: título da categoria e lista de filmes através de props
-function MovieRow({ title, movies }) {
-  
-  // ========== VALIDAÇÃO ==========
-  // Se a lista não existe ou está vazia, não renderiza a fileira
-  if (!movies || movies.length === 0) {
-    return null; // Não exibe nada se não houver filmes
-  }
+function MovieRow({ title, items = [] }) {
+  const rowRef = useRef(null);
+
+  // Manipula a rolagem horizontal suave
+  const handleScroll = (direction) => {
+    if (rowRef.current) {
+      const { scrollLeft, clientWidth } = rowRef.current;
+      const scrollAmount = clientWidth * 0.75;
+
+      rowRef.current.scrollTo({
+        left: direction === "left" ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  if (!items.length) return null;
 
   return (
-    <section className="movie-row"> {/* Seção que agrupa uma categoria de filmes */}
-      {/* Título/nome da categoria */}
-      <h2>{title}</h2>
+    <div className="movie-row-container">
+      <h2 className="movie-row-title">{title}</h2>
 
-      {/* Container que exibe os cards em forma de carroussel */}
-      <div className="movie-list">
-        {/* Itera sobre cada filme na lista e renderiza um card */}
-        {movies.map((movie) => (
-          // Exibe um MovieCard para cada filme
-          // 'key' é necessário para React identificar cada elemento
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
+      <div className="movie-row-wrapper">
+        {/* Botão de Rolagem Esquerda */}
+        <button
+          className="row-nav-btn nav-left"
+          onClick={() => handleScroll("left")}
+          aria-label={`Rolar ${title} para a esquerda`}
+        >
+          ‹
+        </button>
+
+        {/* Lista Horizontal de Cards */}
+        <div className="movie-row-list" ref={rowRef}>
+          {items.map((item) => (
+            <Link
+              key={item.id}
+              to={`/movies/${item.id}`}
+              className="movie-card-link"
+            >
+              <div className="movie-card">
+                <img
+                  src={item.posterUrl || "/placeholder.jpg"}
+                  alt={item.title}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/300x450?text=Sem+Capa";
+                  }}
+                />
+                <div className="movie-card-info">
+                  <span className="movie-card-title">{item.title}</span>
+                  {item.rating && (
+                    <span className="movie-card-rating">★ {item.rating}</span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Botão de Rolagem Direita */}
+        <button
+          className="row-nav-btn nav-right"
+          onClick={() => handleScroll("right")}
+          aria-label={`Rolar ${title} para a direita`}
+        >
+          ›
+        </button>
       </div>
-    </section>
+    </div>
   );
 }
 
-// ========== EXPORTAÇÃO ==========
-// Exporta o componente para ser usado em outras páginas
 export default MovieRow;
