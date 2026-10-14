@@ -1,54 +1,62 @@
 // ========================================
-// COMPONENTE: FILME EM DESTAQUE
+// BANNER EM DESTAQUE - PLAYFAMILY (REFATORADO)
 // ========================================
-// Componente que exibe um filme/série em grande destaque na tela inicial
-// Mostra imagem de fundo, título, descrição e botões de ação
 
-// Importa o hook para navegação entre páginas
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-// Recebe um objeto 'movie' (filme) através de props
 function FeaturedMovie({ movie }) {
-  // Hook que permite redirecionar o usuário para outra página
-  const navigate = useNavigate();
+  if (!movie) return null;
 
-  // ========== VALIDAÇÃO ==========
-  // Se não existe filme em destaque, não renderiza nada
-  if (!movie) {
-    return null; // Retorna null para não exibir nada na tela
-  }
+  // Trunca a descrição se ultrapassar o limite de caracteres
+  const truncateText = (text, maxLength = 200) => {
+    if (!text) return "Sem sinopse disponível.";
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+  };
+
+  // Trata gêneros enviados como Array ou String
+  const genresFormatted = Array.isArray(movie.genres)
+    ? movie.genres.join(", ")
+    : movie.genre || "Geral";
 
   return (
     <section
-      className="featured" // Classe CSS para estilização
+      className="featured-container"
       style={{
-        // Background: imagem do filme com degradê escuro para melhor legibilidade do texto
-        backgroundImage: `linear-gradient(to right, #111 30%, transparent), url(${movie.bannerImage})`
+        backgroundImage: `linear-gradient(to top, #111 10%, transparent 90%), linear-gradient(to right, #111 30%, transparent 70%), url(${movie.backdropUrl || movie.posterUrl})`,
       }}
     >
-      {/* Container com conteúdo textual do destaque */}
       <div className="featured-content">
-        {/* Título do filme/série */}
-        <h2>{movie.title}</h2>
-        
-        {/* Descrição do filme/série */}
-        <p>{movie.description}</p>
+        <h1 className="featured-title">{movie.title}</h1>
 
-        {/* Área dos botões de ação */}
+        <div className="featured-info">
+          <span className="featured-points">★ {movie.rating || "N/A"}</span>
+          <span className="featured-year">{movie.year || "Lançamento"}</span>
+          {movie.seasons && (
+            <span className="featured-seasons">
+              {movie.seasons} {movie.seasons === 1 ? "Temporada" : "Temporadas"}
+            </span>
+          )}
+        </div>
+
+        <p className="featured-description">
+          {truncateText(movie.description)}
+        </p>
+
         <div className="featured-buttons">
-          {/* Botão para assistir (ainda sem funcionalidade) */}
-          <button>Assistir</button>
-          
-          {/* Botão para ver detalhes - Redireciona para página /movies/:id */}
-          <button onClick={() => navigate(`/movies/${movie.id}`)}>
-            Ver detalhes
-          </button>
+          <Link to={`/movies/${movie.id}`} className="btn-featured-watch">
+            ▶ Assistir
+          </Link>
+          <Link to={`/movies/${movie.id}`} className="btn-featured-info">
+            ℹ Mais Informações
+          </Link>
+        </div>
+
+        <div className="featured-genres">
+          <strong>Gêneros:</strong> {genresFormatted}
         </div>
       </div>
     </section>
   );
 }
 
-// ========== EXPORTAÇÃO ==========
-// Exporta o componente para ser usado em outras páginas
 export default FeaturedMovie;
