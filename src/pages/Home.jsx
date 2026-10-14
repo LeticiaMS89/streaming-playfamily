@@ -1,6 +1,8 @@
 // ========================================
-// PÁGINA HOME - PLAYFAMILY (REFATORADA)
+// PÁGINA HOME - PLAYFAMILY (comentada em português)
 // ========================================
+// Este componente carrega os dados em destaque e a lista de títulos
+// Utiliza AbortController para cancelar requisições se o componente desmontar
 
 import { useState, useEffect } from "react";
 import FeaturedMovie from "../components/FeaturedMovie";
@@ -12,6 +14,9 @@ function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // URL base da API (definida via Vite env)
+  const API = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+
   useEffect(() => {
     // AbortController cancela requisições se o componente desmontar
     const controller = new AbortController();
@@ -22,13 +27,23 @@ function Home() {
         setIsLoading(true);
         setError(null);
 
+        // Recupera token (se existir) para enviar em rotas protegidas
+        const token = localStorage.getItem("@PlayFamily:token");
+        const headers = token
+          ? { Authorization: `Bearer ${token}` }
+          : {};
+
         // Busca simultânea de dados para otimizar o tempo de carregamento
         const [featuredResponse, moviesResponse] = await Promise.all([
-          fetch("http://localhost:3000/featured", { signal }),
-          fetch("http://localhost:3000/movies", { signal }),
+          fetch(`${API}/featured`, { signal, headers }),
+          fetch(`${API}/movies`, { signal, headers }),
         ]);
 
         if (!featuredResponse.ok || !moviesResponse.ok) {
+          // Tratamento simplificado — em caso de 401 pode redirecionar ao login
+          if (featuredResponse.status === 401 || moviesResponse.status === 401) {
+            throw new Error('Sessão expirada. Faça login novamente.');
+          }
           throw new Error("Falha ao carregar catálogo do PlayFamily.");
         }
 
@@ -73,9 +88,12 @@ function Home() {
   }
 
   // Agrupamento dinâmico por tipo/categoria
-  const moviesOnly = moviesList.filter((item) => item.type === "movie");
-  const seriesOnly = moviesList.filter((item) => item.type === "series");
-  const animesOnly = moviesList.filter((item) => item.type === "anime");
+  // Alguns itens podem usar a propriedade 'type' ou 'mediaType' — normalizamos aqui
+  const normalizeType = (item) => item.type || (item.mediaType === 'serie' ? 'series' : item.mediaType === 'filme' ? 'movie' : item.mediaType || 'movie');
+
+  const moviesOnly = moviesList.filter((item) => normalizeType(item) === "movie");
+  const seriesOnly = moviesList.filter((item) => normalizeType(item) === "series");
+  const animesOnly = moviesList.filter((item) => normalizeType(item) === "anime");
 
   return (
     <div className="home-container">
