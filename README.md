@@ -2,6 +2,8 @@
 
 Uma aplicação web full‑stack inspirada nas principais plataformas de streaming do mercado. O PlayFamily oferece autenticação via JWT, navegação por categorias, banners em destaque, fileiras/carrosséis de títulos e páginas de detalhes com informações completas. O objetivo do projeto é servir como base prática para aprender e demonstrar padrões de front-end reativos com React e back-end leve em Node.js/Express.
 
+> Nota: Este projeto foi desenvolvido para fins didáticos, estudo prático de arquitetura Full Stack e composição de portfólio técnico.
+
 ---
 
 ## 🚀 Sumário
@@ -233,7 +235,7 @@ Sugestões de melhorias: adicionar banco de dados persistente, endpoints para av
 
 ## 🧾 Licença
 
-Escolha uma licença adequada (ex.: MIT). Se desejar, posso acrescentar um arquivo LICENSE com o texto padrão.
+Este projeto está sob a licença MIT. A licença foi adicionada ao repositório para registrar uso acadêmico e didático do código.
 
 ---
 
