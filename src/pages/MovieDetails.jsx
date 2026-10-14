@@ -1,138 +1,112 @@
 // ========================================
-// PÁGINA: DETALHES DO FILME/SÉRIE
+// DETALHES DO FILME - PLAYFAMILY (REFATORADA)
 // ========================================
-// Página que exibe informações completas sobre um filme/série
-// Acessável ao clicar em um card ou no destaque
 
-// Importa hooks do React
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
-// Importa hooks de roteamento
-import { useParams, useNavigate } from "react-router-dom";
-
-// Importa componente de cabeçalho
-import Header from "../components/Header";
-
-// Componente principal da página de detalhes
 function MovieDetails() {
-  // ========== OBTENÇÃO DO ID DA URL ==========
-  // Recupera o parâmetro 'id' da URL (ex: /movies/2 → id = 2)
   const { id } = useParams();
-
-  // Hook para navegação entre páginas
   const navigate = useNavigate();
 
-  // ========== ESTADOS DO COMPONENTE ==========
-  // Armazena os dados do filme buscado na API
   const [movie, setMovie] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Controla se os dados estão em carregamento
-  const [loading, setLoading] = useState(true);
-
-  // ========== BUSCA DO FILME NO BACKEND ==========
-  // Executado quando a página carrega ou quando o ID da URL muda
   useEffect(() => {
-    // Função assíncrona que busca o filme
-    async function loadMovie() {
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    async function fetchMovieDetails() {
       try {
-        // Faz requisição GET para obter o filme pelo ID
-        const response = await fetch(
-          `http://localhost:3000/movies/${id}`
-        );
+        setIsLoading(true);
+        setError(null);
 
-        // Converte a resposta para objeto JavaScript
+        const response = await fetch(`http://localhost:3000/movies/${id}`, { signal });
+
+        if (response.status === 404) {
+          throw new Error("O título solicitado não foi encontrado no catálogo.");
+        }
+
+        if (!response.ok) {
+          throw new Error("Erro ao carregar os detalhes do título.");
+        }
+
         const data = await response.json();
-
-        // Salva os dados do filme no estado
         setMovie(data);
-      } catch (error) {
-        // Mostra erro no console
-        console.log("Erro ao buscar filme:", error);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(err.message || "Erro de conexão com o servidor.");
+        }
       } finally {
-        // Marca que o carregamento terminou (com sucesso ou erro)
-        setLoading(false);
+        setIsLoading(false);
       }
     }
 
-    // Chama a função de busca
-    loadMovie();
-  }, [id]); // Re-executa se o ID da URL mudar
+    if (id) {
+      fetchMovieDetails();
+    }
 
-  // ========== RENDERIZAÇÃO: CARREGANDO ==========
-  // Mostra enquanto os dados estão sendo carregados
-  if (loading) {
+    return () => controller.abort();
+  }, [id]);
+
+  if (isLoading) {
     return (
-      <div>
-        <Header />
-
-        <div className="details-page">
-          <h2>Carregando filme...</h2>
-        </div>
+      <div className="details-loading">
+        <div className="spinner"></div>
+        <p>Carregando informações do título...</p>
       </div>
     );
   }
 
-  // ========== RENDERIZAÇÃO: FILME NÃO ENCONTRADO ==========
-  // Mostra se o filme não existe ou a API retornou erro
-  if (!movie || movie.message) {
+  if (error || !movie) {
     return (
-      <div>
-        <Header />
-
-        <div className="details-page">
-          <h2>Filme não encontrado</h2>
-
-          {/* Botão para voltar à página inicial */}
-          <button onClick={() => navigate("/home")}>
-            Voltar
-          </button>
-        </div>
+      <div className="details-error">
+        <h2>Conteúdo Indisponível</h2>
+        <p>{error || "Não foi possível carregar as informações."}</p>
+        <button onClick={() => navigate("/")}>Voltar para o início</button>
       </div>
     );
   }
 
-  // ========== RENDERIZAÇÃO: DETALHES DO FILME ==========
-  // Mostra quando o filme foi encontrado com sucesso
   return (
-    <div>
-      <Header />
-
-      {/* Seção principal da página com os detalhes do filme */}
-      <section
-        className="details-page"
+    <div className="movie-details-container">
+      {/* Banner de Fundo */}
+      <div
+        className="movie-banner"
         style={{
-          // Background: imagem do filme com degradê para melhor legibilidade
-          backgroundImage: `linear-gradient(to right, #111 40%, transparent), url(${movie.bannerImage})`
+          backgroundImage: `linear-gradient(to top, #111 10%, transparent 90%), url(${movie.backdropUrl || movie.posterUrl})`,
         }}
       >
-        {/* Container com as informações do filme */}
-        <div className="details-content">
-          {/* Título do filme */}
+        <div className="movie-banner-content">
+          <Link to="/" className="back-button">
+            ← Voltar
+          </Link>
+          
           <h1>{movie.title}</h1>
+          
+          <div className="movie-meta">
+            <span className="movie-rating">★ {movie.rating || "N/A"}</span>
+            <span className="movie-year">{movie.year || "Ano desconhecido"}</span>
+            <span className="movie-genre">{movie.genre || "Geral"}</span>
+          </div>
 
-          {/* Descrição do filme */}
-          <p>{movie.description}</p>
+          <p className="movie-description">
+            {movie.description || "Nenhuma sinopse disponível no momento."}
+          </p>
 
-          {/* Metadados: categoria e tipo */}
-          <span>Categoria: {movie.category}</span>
-          <span>Tipo: {movie.type}</span>
-
-          {/* Botões de ação */}
-          <div className="details-buttons">
-            {/* Botão para assistir (ainda sem funcionalidade de player) */}
-            <button>Assistir agora</button>
-
-            {/* Botão para voltar à página inicial */}
-            <button onClick={() => navigate("/home")}>
-              Voltar
+          <div className="movie-actions">
+            <button 
+              className="btn-play"
+              onClick={() => alert(`Iniciando exibição de: ${movie.title}`)}
+            >
+              ▶ Assistir Agora
             </button>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
 
-// ========== EXPORTAÇÃO ==========
-// Exporta o componente para ser usado nas rotas
 export default MovieDetails;
