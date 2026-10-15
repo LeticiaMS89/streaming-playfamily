@@ -78,7 +78,7 @@ Siga os passos abaixo para rodar as duas pontas da aplicação simultaneamente.
 1. Clonar o Repositório
 
 ```text
-git clone [https://github.com/seu-usuario/playfamily.git](https://github.com/seu-usuario/playfamily.git)
+git clone (https://github.com/LeticiaMS89/streaming-playfamily.git)
 cd playfamily
 ```
 2. Inicializar o Backend
@@ -105,5 +105,7 @@ A aplicação web estará rodando em: http://localhost:3000 (ou na porta definid
 Desenvolvido por Leticia Moreira.
 
 Perfil Profissional: Desenvolvedora Front-end focada no ecossistema React e criação de aplicações web progressivas.
+
+**Redes:** [LinkedIn](https://www.linkedin.com/in/ltc-moreira-silva)
 
 Projeto educacional sem fins lucrativos.
