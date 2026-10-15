@@ -1,10 +1,9 @@
 // ========================================
-// SERVIDOR PLAYFAMILY - BACKEND (refatorado e comentado em português)
+// SERVIDOR PLAYFAMILY - BACKEND 
 // ========================================
-// Mudanças principais:
-// - Prefixo das rotas para /api (ex.: /api/movies, /api/auth/login)
-// - Porta padrão alterada para 4000 (consistente com README e VITE_API_URL)
-// - Normaliza os dados do catálogo para um formato consistente usado pelo frontend
+
+// 1. Carrega as variáveis do arquivo .env ANTES de qualquer coisa
+require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
@@ -14,7 +13,7 @@ const movies = require("./data/movies");
 const app = express();
 
 // Configurações de Ambiente
-const PORT = process.env.PORT || 4000; // padronizado para 4000
+const PORT = process.env.PORT || 4000;
 const JWT_SECRET = process.env.JWT_SECRET || "playfamily_chave_secreta_super_segura_2026";
 
 // Middlewares
@@ -24,9 +23,6 @@ app.use(express.json());
 // Normaliza o catálogo para garantir campos consistentes para o frontend
 function normalizeCatalog(raw) {
   return raw.map((item, index) => {
-    // Define um id único baseado na posição se houver duplicidade nos dados originais
-    const id = index + 1;
-
     // Normaliza o tipo para: movie | series | anime
     const rawType = item.type || item.mediaType || item.media_type || "movie";
     let type = "movie";
@@ -35,23 +31,33 @@ function normalizeCatalog(raw) {
     if (/anime/i.test(rawType)) type = "anime";
 
     return {
-      id,
+      // Prioriza o ID real do banco de dados. Usa index + 1 apenas se não existir.
+      id: item.id || index + 1, 
+      
+      // CRÍTICO: Mantém a regra de controle parental/perfis do PlayFamily
+      profileIds: item.profileIds || [], 
+      
       // títulos e descrições
       title: item.title || item.name || "Sem título",
       description: item.description || item.sinopse || "Sem descrição",
+      
       // imagens (nomes diferentes no dataset original)
       posterUrl: item.coverImage || item.posterUrl || "",
       backdropUrl: item.bannerImage || item.backdropUrl || "",
+      
       // tipo normalizado
       type,
+      
       // gêneros como array
       genres: Array.isArray(item.genres) ? item.genres : (item.genres ? [item.genres] : []),
+      
       // trailer, rating e ano (se existirem)
       trailerUrl: item.trailerUrl || "",
       rating: item.rating || item.points || null,
       year: item.year || item.releaseYear || null,
       seasons: item.seasons || null,
       featured: item.featured === true,
+      
       // mantém dados originais para inspeção se necessário
       _raw: item,
     };
@@ -121,7 +127,7 @@ app.post("/api/auth/login", (req, res) => {
     }
 
     // Credencial simulada (em produção, consultar banco de dados com hash de senha)
-    if (email === "user@PlayFamily.com" && password === "123456") {
+    if (email === "user@playfamily.com" && password === "123456") {
       const user = {
         id: "usr_101",
         name: "Usuário PlayFamily",
@@ -145,7 +151,7 @@ app.post("/api/auth/login", (req, res) => {
   }
 });
 
-// Exemplo de rota protegida que exige JWT (opcional)
+// Middleware que protege as rotas
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
